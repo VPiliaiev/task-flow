@@ -5,6 +5,14 @@ from django.db import models
 class Position(models.Model):
     name = models.CharField(max_length=63)
 
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Position"
+        verbose_name_plural = "Positions"
+
+    def __str__(self):
+        return self.name
+
 
 class Worker(AbstractUser):
     position = models.ForeignKey(
@@ -15,9 +23,25 @@ class Worker(AbstractUser):
         blank=True
     )
 
+    class Meta:
+        ordering = ["username"]
+        verbose_name = "Worker"
+        verbose_name_plural = "Workers"
+
+    def __str__(self):
+        return f"{self.username} ({self.position})" if self.position else self.username
+
 
 class TaskType(models.Model):
     name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Task Type"
+        verbose_name_plural = "Task Types"
+
+    def __str__(self):
+        return self.name
 
 
 class Task(models.Model):
@@ -26,6 +50,7 @@ class Task(models.Model):
         HIGH = "High", "High"
         MEDIUM = "Medium", "Medium"
         LOW = "Low", "Low"
+
     name = models.CharField(max_length=255)
     description = models.TextField()
     deadline = models.DateTimeField()
@@ -45,3 +70,11 @@ class Task(models.Model):
         Worker,
         related_name="assigned_tasks"
     )
+
+    class Meta:
+        ordering = ["deadline", "priority"]
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
+
+    def __str__(self):
+        return f"{self.name} [{self.priority}]"
