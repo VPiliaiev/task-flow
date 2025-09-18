@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ task.name }}</h1>
+
+  <p><strong>Description:</strong> {{ task.description }}</p>
+  <p><strong>Deadline:</strong> {{ task.deadline }}</p>
+  <p><strong>Priority:</strong> {{ task.priority }}</p>
+  <p><strong>Completed:</strong> {{ task.is_completed|yesno:"Yes,No" }}</p>
+  <p><strong>Task type:</strong> {{ task.task_type }}</p>
+  <p><strong>Assignees:</strong>
+    {% if task.assignees.all %}
+      <ul>
+        {% for worker in task.assignees.all %}
+          <li>{{ worker.username }} ({{ worker.position }})</li>
+        {% empty %}
+          <li>No assignees</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </p>
+
+  <a href="{% url 'tasks:task-list' %}"> Back to tasks</a>
+{% endblock %}
