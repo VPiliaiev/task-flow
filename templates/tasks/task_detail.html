@@ -1,24 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>{{ task.name }}</h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ task.name }}</h1>
+    <div>
+      <a href="{% url 'tasks:task-update' task.id %}" class="btn btn-warning btn-sm">Update</a>
+      <a href="{% url 'tasks:task-delete' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+    </div>
+  </div>
 
-  <p><strong>Description:</strong> {{ task.description }}</p>
-  <p><strong>Deadline:</strong> {{ task.deadline }}</p>
-  <p><strong>Priority:</strong> {{ task.priority }}</p>
-  <p><strong>Completed:</strong> {{ task.is_completed|yesno:"Yes,No" }}</p>
-  <p><strong>Task type:</strong> {{ task.task_type }}</p>
-  <p><strong>Assignees:</strong>
-    {% if task.assignees.all %}
-      <ul>
-        {% for worker in task.assignees.all %}
-          <li>{{ worker.username }} ({{ worker.position }})</li>
-        {% empty %}
-          <li>No assignees</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  </p>
+  <table class="table table-bordered">
+    <tr>
+      <th>Description</th>
+      <td>{{ task.description }}</td>
+    </tr>
+    <tr>
+      <th>Deadline</th>
+      <td>{{ task.deadline }}</td>
+    </tr>
+    <tr>
+      <th>Priority</th>
+      <td>{{ task.priority }}</td>
+    </tr>
+    <tr>
+      <th>Completed</th>
+      <td>{{ task.is_completed|yesno:"Yes,No" }}</td>
+    </tr>
+    <tr>
+      <th>Task type</th>
+      <td>{{ task.task_type }}</td>
+    </tr>
+    <tr>
+      <th>Assignees</th>
+      <td>
+        {% if task.assignees.all %}
+          <ul class="list-group">
+            {% for worker in task.assignees.all %}
+              <li class="list-group-item">
+                <a href="{% url 'tasks:worker-detail' worker.id %}">
+                  {{ worker.username }}
+                </a>
+                {% if worker.position %}
+                  ({{ worker.position }})
+                {% endif %}
+              </li>
+            {% empty %}
+              <li class="list-group-item"><em>No assignees</em></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <em>No assignees</em>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
 
-  <a href="{% url 'tasks:task-list' %}"> Back to tasks</a>
+  <a href="{% url 'tasks:task-list' %}" class="btn btn-secondary">Back to tasks</a>
 {% endblock %}

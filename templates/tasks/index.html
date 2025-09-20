@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Tasks Home</h1>
-  <p>Welcome!</p>
+  <h1>Task Manager Home</h1>
+  <p>Welcome to the Task Manager application!</p>
+
+  <h3>Statistics:</h3>
+  <ul>
+    <li>Total workers: {{ num_workers }}</li>
+    <li>Total tasks: {{ num_tasks }}</li>
+    <li>Completed tasks: {{ num_completed_tasks }}</li>
+  </ul>
 {% endblock %}

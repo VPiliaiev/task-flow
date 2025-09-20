@@ -1,0 +1,84 @@
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{#  <div class="d-flex justify-content-between align-items-center mb-3">#}
+{#    <h1>Workers</h1>#}
+{#    <a href="{% url 'tasks:worker-create' %}" class="btn btn-primary">#}
+{#      Create Worker#}
+{#    </a>#}
+{#  </div>#}
+{##}
+{#  <table class="table">#}
+{#    <thead>#}
+{#      <tr>#}
+{#        <th>Username</th>#}
+{#        <th>First Name</th>#}
+{#        <th>Last Name</th>#}
+{#        <th>Position</th>#}
+{#        <th>Actions</th>#}
+{#      </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#      {% for worker in worker_list %}#}
+{#        <tr>#}
+{#          <td><a href="{{ worker.get_absolute_url }}">{{ worker.username }}</a></td>#}
+{#          <td>{{ worker.first_name }}</td>#}
+{#          <td>{{ worker.last_name }}</td>#}
+{#          <td>{{ worker.position }}</td>#}
+{#          <td>#}
+{#            <a href="{% url 'tasks:worker-update' worker.id %}" class="btn btn-sm btn-warning">Update</a>#}
+{#            <a href="{% url 'tasks:worker-delete' worker.id %}" class="btn btn-sm btn-danger">Delete</a>#}
+{#          </td>#}
+{#        </tr>#}
+{#      {% empty %}#}
+{#        <tr><td colspan="5">No workers yet</td></tr>#}
+{#      {% endfor %}#}
+{#    </tbody>#}
+{#  </table>#}
+{#{% endblock %}#}
+
+
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <form method="get" class="form-inline">
+      {{ search_form.username }}
+      <button type="submit" class="btn btn-primary btn-sm ml-2">Search</button>
+    </form>
+
+    <a href="{% url 'tasks:worker-create' %}" class="btn btn-primary">
+      Create Worker
+    </a>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Position</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for worker in worker_list %}
+        <tr>
+          <td>{{ worker.id }}</td>
+          <td><a href="{{ worker.get_absolute_url }}">{{ worker.username }}</a>{% if user == worker %} (Me){% endif %}</td>
+          <td>{{ worker.first_name }}</td>
+          <td>{{ worker.last_name }}</td>
+          <td>{{ worker.position }}</td>
+          <td>
+            <a href="{% url 'tasks:worker-update' worker.id %}" class="btn btn-sm btn-warning">Update</a>
+            <a href="{% url 'tasks:worker-delete' worker.id %}" class="btn btn-sm btn-danger">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6">No workers found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

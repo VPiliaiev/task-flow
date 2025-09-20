@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Worker Details: {{ object.username }}</h1>
+
+  <table class="table table-bordered">
+    <tr>
+      <th>ID</th>
+      <td>{{ object.id }}</td>
+    </tr>
+    <tr>
+      <th>Username</th>
+      <td>{{ object.username }}</td>
+    </tr>
+    <tr>
+      <th>First Name</th>
+      <td>{{ object.first_name }}</td>
+    </tr>
+    <tr>
+      <th>Last Name</th>
+      <td>{{ object.last_name }}</td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>{{ object.email }}</td>
+    </tr>
+    <tr>
+      <th>Position</th>
+      <td>{{ object.position }}</td>
+    </tr>
+  </table>
+
+  <h2>Assigned Tasks</h2>
+  {% if tasks %}
+    <ul class="list-group mb-3">
+      {% for task in tasks %}
+        <li class="list-group-item">
+          <a href="{% url 'tasks:task-detail' task.id %}">{{ task.name }}</a> 
+          — <strong>{{ task.priority }}</strong>, deadline: {{ task.deadline }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No tasks assigned.</em></p>
+  {% endif %}
+
+  <a href="{% url 'tasks:worker-list' %}" class="btn btn-secondary">Back to Worker List</a>
+{% endblock %}
