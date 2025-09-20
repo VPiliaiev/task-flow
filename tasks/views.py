@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskForm, WorkerCreationForm, TaskNameSearchForm, WorkerUsernameSearchForm
+from tasks.forms import TaskForm, WorkerCreationForm, TaskNameSearchForm, WorkerUsernameSearchForm, TaskStatusFilterForm
 from tasks.models import Task, Worker
 
 
@@ -27,15 +27,27 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         queryset = Task.objects.all()
-        form = TaskNameSearchForm(self.request.GET)
-        if form.is_valid():
-            queryset = queryset.filter(name__icontains=form.cleaned_data["name"])
+
+        search_form = TaskNameSearchForm(self.request.GET)
+        if search_form.is_valid():
+            name = search_form.cleaned_data["name"]
+            if name:
+                queryset = queryset.filter(name__icontains=name)
+
+        status_form = TaskStatusFilterForm(self.request.GET)
+        if status_form.is_valid():
+            status = status_form.cleaned_data["status"]
+            if status == "completed":
+                queryset = queryset.filter(is_completed=True)
+            elif status == "pending":
+                queryset = queryset.filter(is_completed=False)
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        name = self.request.GET.get("name", "")
-        context["search_form"] = TaskNameSearchForm(initial={"name": name})
+        context["search_form"] = TaskNameSearchForm(self.request.GET)
+        context["filter_form"] = TaskStatusFilterForm(self.request.GET)
         return context
 
 

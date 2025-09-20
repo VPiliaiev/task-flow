@@ -29,6 +29,20 @@ class TaskNameSearchForm(forms.Form):
     )
 
 
+class TaskStatusFilterForm(forms.Form):
+    STATUS_CHOICES = (
+        ("", "All"),
+        ("completed", "Completed"),
+        ("pending", "Pending"),
+    )
+    status = forms.ChoiceField(
+        choices=STATUS_CHOICES,
+        required=False,
+        label="",
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+
+
 class WorkerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Worker
