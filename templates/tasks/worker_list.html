@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Workers</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'tasks:index' %}">Home</a></li>
+            <li class="breadcrumb-item active">Workers</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Worker List</h3>
+              <div class="card-tools">
+                <a href="{% url 'tasks:worker-create' %}" class="btn btn-primary btn-sm">
+                  Create Worker
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <form method="get" class="form-inline">
+                  <div class="input-group input-group-sm mr-2">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                    {{ search_form.username }}
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                </form>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Position</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for worker in worker_list %}
+                    <tr>
+                      <td>{{ worker.id }}</td>
+                      <td><a href="{{ worker.get_absolute_url }}">{{ worker.username }}</a>{% if user == worker %}
+                        (Me){% endif %}</td>
+                      <td>{{ worker.first_name }}</td>
+                      <td>{{ worker.last_name }}</td>
+                      <td>
+                        {% if worker.position %}
+                          {{ worker.position }}
+                        {% else %}
+                          <em>No position</em>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <a href="{% url 'tasks:worker-update' worker.id %}" class="btn btn-sm btn-warning">Update</a>
+                          <a href="{% url 'tasks:worker-delete' worker.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="6" class="text-center">No workers found</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
