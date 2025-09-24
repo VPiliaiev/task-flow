@@ -1,13 +1,184 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <h1>Task Manager Home</h1>
-  <p>Welcome to the Task Manager application!</p>
+{% block title %}Dashboard{% endblock %}
 
-  <h3>Statistics:</h3>
-  <ul>
-    <li>Total workers: {{ num_workers }}</li>
-    <li>Total tasks: {{ num_tasks }}</li>
-    <li>Completed tasks: {{ num_completed_tasks }}</li>
-  </ul>
+{% block content %}
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12">
+          <h1 class="m-0">Dashboard</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+          <div class="small-box bg-info text-center">
+            <div class="inner">
+              <h3>{{ num_workers }}</h3>
+              <p>Total Workers</p>
+            </div>
+            <div class="icon">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+          <div class="small-box bg-warning text-center">
+            <div class="inner">
+              <h3>{{ num_tasks }}</h3>
+              <p>Total Tasks</p>
+            </div>
+            <div class="icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+          <div class="small-box bg-success text-center">
+            <div class="inner">
+              <h3>{{ num_completed_tasks }}</h3>
+              <p>Completed Tasks</p>
+            </div>
+            <div class="icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">About TaskFlow</h3>
+            </div>
+            <div class="card-body">
+              <p><b>TaskFlow</b> is a simple and effective task management app. It helps you create tasks, assign them
+                to team members, and track their completion.</p>
+              <p>With TaskFlow, you can easily organize your work, monitor progress, and make sure no task is left
+                undone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-6 mb-3">
+                  <a href="{% url 'tasks:task-create' %}" class="btn btn-block btn-success btn-lg">
+                    <i class="fas fa-plus mr-2"></i> Create New Task
+                  </a>
+                </div>
+                <div class="col-lg-6 mb-3">
+                  <a href="{% url 'tasks:worker-create' %}" class="btn btn-block btn-info btn-lg">
+                    <i class="fas fa-user-plus mr-2"></i> Add New Worker
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 mb-3">
+                  <a href="{% url 'tasks:task-list' %}" class="btn btn-block btn-primary btn-lg">
+                    <i class="fas fa-clipboard-list mr-2"></i> View All Tasks
+                  </a>
+                </div>
+                <div class="col-lg-6 mb-3">
+                  <a href="{% url 'tasks:worker-list' %}" class="btn btn-block btn-secondary btn-lg">
+                    <i class="fas fa-users mr-2"></i> View All Workers
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card card-warning card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Tasks by Priority</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="priorityChart" style="height:250px"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="card card-danger card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Upcoming Deadlines</h3>
+                </div>
+                <div class="card-body p-0">
+                  {% if upcoming_deadlines %}
+                    <ul class="list-group list-group-flush">
+                      {% for task in upcoming_deadlines %}
+                        <li class="list-group-item">
+                          <a href="{% url 'tasks:task-detail' task.id %}">{{ task.name }}</a>
+                          <span class="float-right badge badge-danger">
+                           <i class="far fa-clock"></i> Due: {{ task.deadline|date:"M d" }}
+                        </span>
+                          <br>
+                          <small class="text-muted">Priority: {{ task.priority }}</small>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <div class="p-3">
+                      <div class="alert alert-success mb-0">No upcoming deadlines.</div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+  <script>
+      $(function () {
+          var priorityData = {
+              labels: [
+                  'High Priority',
+                  'Medium Priority',
+                  'Low Priority'
+              ],
+              datasets: [
+                  {
+                      data: [{{ priority_high|default:0 }}, {{ priority_medium|default:0 }}, {{ priority_low|default:0 }}],
+                      backgroundColor: ['#f56954', '#f39c12', '#00c0ef'],
+                  }
+              ]
+          }
+
+          var pieChartCanvas = $('#priorityChart').get(0).getContext('2d')
+          var pieOptions = {
+              maintainAspectRatio: false,
+              responsive: true,
+          }
+          new Chart(pieChartCanvas, {
+              type: 'doughnut',
+              data: priorityData,
+              options: pieOptions
+          });
+      });
+  </script>
 {% endblock %}

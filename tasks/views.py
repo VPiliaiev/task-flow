@@ -1,9 +1,13 @@
+from datetime import date, timedelta
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskForm, WorkerCreationForm, TaskNameSearchForm, WorkerUsernameSearchForm, TaskStatusFilterForm
+from tasks.forms import TaskForm, WorkerCreationForm, TaskNameSearchForm, WorkerUsernameSearchForm, \
+    TaskStatusFilterForm, WorkerUpdateForm
 from tasks.models import Task, Worker
 
 
@@ -12,9 +16,35 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context["num_workers"] = Worker.objects.count()
         context["num_tasks"] = Task.objects.count()
         context["num_completed_tasks"] = Task.objects.filter(is_completed=True).count()
+
+        upcoming_tasks_queryset = Task.objects.filter(
+            is_completed=False,
+            deadline__gte=date.today(),
+            deadline__lte=date.today() + timedelta(days=7)
+        ).order_by('deadline')[:5]
+        context["upcoming_deadlines"] = upcoming_tasks_queryset
+
+        priority_counts = Task.objects.values('priority').annotate(count=Count('priority'))
+
+        priority_high = 0
+        priority_medium = 0
+        priority_low = 0
+
+        for item in priority_counts:
+            if item['priority'] == 'High':
+                priority_high = item['count']
+            elif item['priority'] == 'Medium':
+                priority_medium = item['count']
+            elif item['priority'] == 'Low':
+                priority_low = item['count']
+
+        context["priority_high"] = priority_high
+        context["priority_medium"] = priority_medium
+        context["priority_low"] = priority_low
 
         return context
 
@@ -112,7 +142,7 @@ class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
 
 class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = get_user_model()
-    form_class = WorkerCreationForm
+    form_class = WorkerUpdateForm
     template_name = "tasks/worker_form.html"
     success_url = reverse_lazy("tasks:worker-list")
 
