@@ -1,17 +1,54 @@
-<ul class="list-group">
-  {% if user.is_authenticated %}
-    <li class="list-group-item">User: <a href="{{ user.get_absolute_url }}">{{ user.get_username }}</a></li>
-    <li class="list-group-item">
-      <form action="{% url 'logout' %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">Logout</button>
-      </form>
-    </li>  {% else %}
-    <li class="list-group-item"><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-  {% endif %}
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <a href="{% url 'tasks:index' %}" class="brand-link text-center">
+    <span class="brand-text font-weight-light">TaskFlow</span>
+  </a>
 
-  <br>
-  <li class="list-group-item"><a href="{% url 'tasks:index' %}"> Home</a></li>
-  <li class="list-group-item"><a href="{% url 'tasks:task-list' %}"> Tasks</a></li>
-  <li class="list-group-item"><a href="{% url 'tasks:worker-list' %}"> Workers</a></li>
-</ul>
+  <div class="sidebar">
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+          <span class="nav-link text-white">
+            <i class="fas fa-user nav-icon"></i>
+            {{ user.get_username }}
+          </span>
+          </li>
+          <li class="nav-item">
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link p-0 m-0 text-white align-baseline">
+                <i class="fas fa-sign-out-alt nav-icon"></i> Logout
+              </button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a href="{% url 'login' %}?next={{ request.path }}" class="nav-link text-white">
+              <i class="fas fa-sign-in-alt nav-icon"></i> Login
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="nav-item">
+          <a href="{% url 'tasks:index' %}" class="nav-link">
+            <i class="fas fa-home nav-icon"></i>
+            Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'tasks:task-list' %}" class="nav-link">
+            <i class="fas fa-tasks nav-icon"></i>
+            Tasks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'tasks:worker-list' %}" class="nav-link">
+            <i class="fas fa-users nav-icon"></i>
+            Workers
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>

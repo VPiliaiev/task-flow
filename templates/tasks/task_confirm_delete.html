@@ -1,17 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Delete Task</h1>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Delete Task</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'tasks:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tasks:task-list' %}">Tasks</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <p>Are you sure you want to delete the task: "{{ object }}"?</p>
-  <form method="post">
-    {% csrf_token %}
-    <input type="submit" value="Yes, delete" class="btn btn-danger"/>
-
-    {% if request.META.HTTP_REFERER %}
-      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancel</a>
-    {% else %}
-      <a href="{% url 'tasks:task-list' %}" class="btn btn-secondary">Cancel</a>
-    {% endif %}
-  </form>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Confirm Deletion</h3>
+            </div>
+            <div class="card-body">
+              <p>Are you sure you want to delete the task: **"{{ object }}"**?</p>
+              <p>This action cannot be undone.</p>
+            </div>
+            <div class="card-footer">
+              <form method="post">
+                {% csrf_token %}
+                <input type="submit" value="Yes, delete" class="btn btn-danger mr-2"/>
+                {% if request.META.HTTP_REFERER %}
+                  <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-default">Cancel</a>
+                {% else %}
+                  <a href="{% url 'tasks:task-list' %}" class="btn btn-default">Cancel</a>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

@@ -1,59 +1,98 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>{{ task.name }}</h1>
-    <div>
-      <a href="{% url 'tasks:task-update' task.id %}" class="btn btn-warning btn-sm">Update</a>
-      <a href="{% url 'tasks:task-delete' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Task Details</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'tasks:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tasks:task-list' %}">Tasks</a></li>
+            <li class="breadcrumb-item active">{{ task.name }}</li>
+          </ol>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <table class="table table-bordered">
-    <tr>
-      <th>Description</th>
-      <td>{{ task.description }}</td>
-    </tr>
-    <tr>
-      <th>Deadline</th>
-      <td>{{ task.deadline }}</td>
-    </tr>
-    <tr>
-      <th>Priority</th>
-      <td>{{ task.priority }}</td>
-    </tr>
-    <tr>
-      <th>Completed</th>
-      <td>{{ task.is_completed|yesno:"Yes,No" }}</td>
-    </tr>
-    <tr>
-      <th>Task type</th>
-      <td>{{ task.task_type }}</td>
-    </tr>
-    <tr>
-      <th>Assignees</th>
-      <td>
-        {% if task.assignees.all %}
-          <ul class="list-group">
-            {% for worker in task.assignees.all %}
-              <li class="list-group-item">
-                <a href="{% url 'tasks:worker-detail' worker.id %}">
-                  {{ worker.username }}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">{{ task.name }}</h3>
+              <div class="card-tools">
+                <a href="{% url 'tasks:task-update' task.id %}" class="btn btn-tool btn-warning">
+                  <i class="fas fa-edit"></i> Update
                 </a>
-                {% if worker.position %}
-                  ({{ worker.position }})
-                {% endif %}
-              </li>
-            {% empty %}
-              <li class="list-group-item"><em>No assignees</em></li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <em>No assignees</em>
-        {% endif %}
-      </td>
-    </tr>
-  </table>
-
-  <a href="{% url 'tasks:task-list' %}" class="btn btn-secondary">Back to tasks</a>
+                <a href="{% url 'tasks:task-delete' task.id %}" class="btn btn-tool btn-danger">
+                  <i class="fas fa-trash"></i> Delete
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <tbody>
+                  <tr>
+                    <th><i class="fas fa-info-circle mr-2"></i>Description</th>
+                    <td>{{ task.description|default:"No description" }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-calendar-alt mr-2"></i>Deadline</th>
+                    <td>{{ task.deadline }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-tachometer-alt mr-2"></i>Priority</th>
+                    <td>{{ task.priority }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-check-circle mr-2"></i>Completed</th>
+                    <td>
+                      {% if task.is_completed %}
+                        <span class="badge badge-success">Yes</span>
+                      {% else %}
+                        <span class="badge badge-warning">No</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-cogs mr-2"></i>Task type</th>
+                    <td>{{ task.task_type }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-users mr-2"></i>Assignees</th>
+                    <td>
+                      {% if task.assignees.all %}
+                        {% for worker in task.assignees.all %}
+                          <a href="{% url 'tasks:worker-detail' worker.id %}" class="badge badge-info mr-1">
+                            {{ worker.username }}
+                            {% if worker.position %}
+                              ({{ worker.position }})
+                            {% endif %}
+                          </a>
+                        {% endfor %}
+                      {% else %}
+                        <span class="badge badge-secondary">No assignees</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer">
+              <a href="{% url 'tasks:task-list' %}" class="btn btn-default">
+                <i class="fas fa-arrow-left"></i> Back to tasks
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

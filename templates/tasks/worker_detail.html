@@ -1,48 +1,110 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Worker Details: {{ object.username }}</h1>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Worker Details</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'tasks:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tasks:worker-list' %}">Workers</a></li>
+            <li class="breadcrumb-item active">{{ object.username }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <table class="table table-bordered">
-    <tr>
-      <th>ID</th>
-      <td>{{ object.id }}</td>
-    </tr>
-    <tr>
-      <th>Username</th>
-      <td>{{ object.username }}</td>
-    </tr>
-    <tr>
-      <th>First Name</th>
-      <td>{{ object.first_name }}</td>
-    </tr>
-    <tr>
-      <th>Last Name</th>
-      <td>{{ object.last_name }}</td>
-    </tr>
-    <tr>
-      <th>Email</th>
-      <td>{{ object.email }}</td>
-    </tr>
-    <tr>
-      <th>Position</th>
-      <td>{{ object.position }}</td>
-    </tr>
-  </table>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-user-circle mr-2"></i>Worker Information</h3>
+              <div class="card-tools">
+                <a href="{% url 'tasks:worker-update' object.id %}" class="btn btn-tool btn-warning">
+                  <i class="fas fa-edit"></i> Update
+                </a>
+                <a href="{% url 'tasks:worker-delete' object.id %}" class="btn btn-tool btn-danger">
+                  <i class="fas fa-trash"></i> Delete
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <tbody>
+                  <tr>
+                    <th><i class="fas fa-id-badge mr-2"></i>ID</th>
+                    <td>{{ object.id }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-user mr-2"></i>Username</th>
+                    <td>{{ object.username }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-user-alt mr-2"></i>First Name</th>
+                    <td>{{ object.first_name|default:"-" }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-user-alt mr-2"></i>Last Name</th>
+                    <td>{{ object.last_name|default:"-" }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-envelope mr-2"></i>Email</th>
+                    <td>{{ object.email|default:"-" }}</td>
+                  </tr>
+                  <tr>
+                    <th><i class="fas fa-briefcase mr-2"></i>Position</th>
+                    <td>{{ object.position|default:"-" }}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <h2>Assigned Tasks</h2>
-  {% if tasks %}
-    <ul class="list-group mb-3">
-      {% for task in tasks %}
-        <li class="list-group-item">
-          <a href="{% url 'tasks:task-detail' task.id %}">{{ task.name }}</a> 
-          — <strong>{{ task.priority }}</strong>, deadline: {{ task.deadline }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p><em>No tasks assigned.</em></p>
-  {% endif %}
+        <div class="col-md-6">
+          <div class="card card-info card-outline">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-tasks mr-2"></i>Assigned Tasks</h3>
+            </div>
+            <div class="card-body">
+              {% if tasks %}
+                <ul class="list-group list-group-flush">
+                  {% for task in tasks %}
+                    <li class="list-group-item">
+                      <a href="{% url 'tasks:task-detail' task.id %}">{{ task.name }}</a>
+                      <span class="float-right badge badge-primary">
+                      {{ task.priority }}
+                    </span>
+                      <br>
+                      <small class="text-muted">Deadline: {{ task.deadline|date:"F j, Y" }}</small>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="alert alert-info">
+                  <p class="mb-0"><em>No tasks assigned to this worker.</em></p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <a href="{% url 'tasks:worker-list' %}" class="btn btn-secondary">Back to Worker List</a>
+      <div class="row">
+        <div class="col-12 text-center">
+          <a href="{% url 'tasks:worker-list' %}" class="btn btn-default mt-3">
+            <i class="fas fa-arrow-left"></i> Back to Worker List
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
