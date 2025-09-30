@@ -1,5 +1,3 @@
-from dotenv.main import load_dotenv
-
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
